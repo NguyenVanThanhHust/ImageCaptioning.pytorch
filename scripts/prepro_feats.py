@@ -28,7 +28,11 @@ import numpy as np
 import torch
 import torchvision.models as models
 import skimage.io
-
+import cv2
+import numpy as np
+from PIL import Image
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 from torchvision import transforms as trn
 preprocess = trn.Compose([
                 #trn.ToTensor(),
@@ -60,9 +64,14 @@ def main(params):
         os.mkdir(dir_att)
 
     for i,img in enumerate(imgs):
+        if i < 89000:
+            continue
         # load the image
-        I = skimage.io.imread(os.path.join(params['images_root'], img['filepath'], img['filename']))
+        img_path = os.path.join(params['images_root'], img['filepath'], img['filename'])
+        I = Image.open(img_path).convert('RGB')
+        # I = skimage.io.imread()
         # handle grayscale input images
+        I = np.asarray(I)
         if len(I.shape) == 2:
             I = I[:,:,np.newaxis]
             I = np.concatenate((I,I,I), axis=2)
